@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "deps_installer"
-version = "0.1.0"
+version = "{{ VERSION }}"
 description = "A minimal Python project example."
 requires-python = ">=3.8"
 dependencies = [
