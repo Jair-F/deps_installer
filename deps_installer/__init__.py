@@ -1,0 +1,1 @@
+from .deps_installer import install_deps
