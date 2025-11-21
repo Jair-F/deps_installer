@@ -2,4 +2,9 @@ __pycache__
 dist
 build
 tmp
-src/data
+data
+Lib
+Scripts
+pyvenv.cfg
+CACHEDIR.TAG
+deps_installer.egg-info

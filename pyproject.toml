@@ -11,6 +11,3 @@ dependencies = [
     "pyuac>=0.0.3",
     "pywin32>=311"
 ]
-
-[tool.setuptools.packages.find]
-where = ["deps_installer"]
