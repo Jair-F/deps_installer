@@ -6,136 +6,74 @@ Simple helper to bundle small installer scripts with a Python app and run
 them at runtime (Windows only). The package looks for an `installers`
 directory (default: `data/installers`) in the packaged resources and executes
 each file found there. This lets you ship one executable or folder and have
-supporting installers run automatically or on-demand.
+# deps_installer
 
-**Key points**
-- ✅ **Default installer folder:** `data/installers`
-- ✅ **Main function:** `install_deps(installer_folder='data/installers')`
-- ✅ **Platform:** Windows only (function is a no-op on other OSes)
+![Python](https://img.shields.io/badge/python-3.8%2B-blue)
 
-**Why use this**
-- Ship one EXE or directory to end users and include auxiliary installer
-	executables, batch files, or scripts in `data/installers`.
-- Run installers programmatically or via a command-line flag in your app.
+Lightweight helper to bundle and run small installer scripts included with a
+Python application. It locates a folder of installer files (default:
+`data/installers`) in your package/executable and executes each file found.
 
-⚠️ Note: The module executes files found in the installer folder. Only use
-trusted installer files—executing arbitrary files is a security risk.
+Table of Contents
+- Quick Start
+- Usage
+- Packaging (PyInstaller)
+- Troubleshooting & Notes
+- Security
+- Contributing
 
-## 📁 Example package layout
+## Quick Start
 
-```
-project_root/
-├─ data/
-│  └─ installers/
-│     ├─ setup_driver.exe
-│     └─ install_helper.bat
-├─ src/
-│  ├─ example_use.py
-│  └─ deps_installer/
-│     ├─ __init__.py
-│     └─ deps_installer.py
-├─ pyproject.toml
-└─ README.md
-```
-
-## ⚙️ How it works (brief)
-
-- Call `install_deps()` and the module will resolve the resource path and
-	iterate the files in the installer folder. Each file is executed using
-	`subprocess.Popen`.
-
-## ℹ️ Important behavior
-
-- The function only runs on Windows and will print `not on windows - not installing`
-	on other platforms.
-- Files in `data/installers` must be executable (e.g. `.exe`, `.msi`, `.bat`).
-
-## ▶️ Usage — programmatic
-
-Import and call the function in Python:
+Programmatic call (fast):
 
 ```python
 from deps_installer import install_deps
-
-# Uses the default folder 'data/installers'
-install_deps()
-
-# Or point to a different folder included in your package/data
-install_deps(installer_folder='data/my_installers')
+install_deps()  # uses 'data/installers' by default
 ```
 
-## 💻 Usage — example CLI
-
-The repository includes `src/example_use.py` to demonstrate a simple flag-based
-approach. Example:
+Example CLI (provided sample):
 
 ```powershell
-# From project root
 python src/example_use.py --install_deps
 ```
 
-`example_use.py` shows how to optionally re-launch with elevation (example uses
-`pyuac`) and then call `deps_installer.install_deps()` when `--install_deps` is
-given.
+## Usage
 
-## 📦 Packaging with PyInstaller
+- Function: `install_deps(installer_folder='data/installers')`
+- Platform: Windows only — on other OSes the function prints a message and
+  returns without running installers.
 
-When bundling into a single-file EXE, include the `data` folder so the
-installer files are available at runtime. Example PyInstaller command (run
-from project root):
+Notes:
+- The function executes every file found in the provided folder using
+  `subprocess.Popen`. Ensure files are executable and trusted.
+- If you bundle with PyInstaller, use `--add-binary data:data` (see Packaging).
+
+## Packaging (PyInstaller)
+
+Embed the `data` folder so installer files are available at runtime. Example:
 
 ```powershell
 pyinstaller -F --clean --distpath dist \
-	--add-binary data:data \
-	--runtime-tmpdir tmp \
-	--name installer_try src/example_use.py
+  --add-binary data:data \
+  --runtime-tmpdir tmp \
+  --name installer_try src/example_use.py
 ```
 
-- `--add-binary data:data` embeds the local `data` folder into the exe under
-	the `data` path (so the code can access `data/installers`).
-- `--runtime-tmpdir tmp` makes PyInstaller extract files into a `tmp` runtime
-	directory instead of the OS temp folder.
+This places your `data` contents inside the executable runtime so
+`install_deps()` can find `data/installers`.
 
-## 📦 Build distribution (wheel / sdist)
+## Troubleshooting & Notes
 
-If you want a distributable Python package, use `build`:
+- Missing folder: `os.listdir` will raise if the folder does not exist. Create
+  `data/installers` (or pass a different folder) before packaging.
+- Interactive installers: test installers manually—automated installs should
+  avoid blocking prompts.
+- Admin rights: if installers require elevation, re-launch your app as admin
+  (see `pyuac` usage in `src/example_use.py`).
 
-```powershell
-pip install build
-python -m build
-```
+## Security
 
-That will create `.whl` and `.tar.gz` files in `dist/`.
-
-## 🛠️ Troubleshooting & tips
-
-- If the installer folder is missing `os.listdir` will raise an exception—ensure
-	`data/installers` exists before packaging.
-- Test each installer manually before bundling to ensure it runs without
-	interactive prompts (or handle prompts in your packaging flow).
-- If installers require admin rights, re-launch your app with elevation
-	(see `pyuac` usage in `src/example_use.py`).
-
-## ⚠️ Security note
-
-This project executes files present in the bundled data folder. Only include
-trusted installers and consider adding integrity checks (signatures or hashes)
-before executing files in production.
-
-## 📈 Project status & suggested improvements
-
-- Add error handling for a missing or empty installer folder.
-- Add filtering so only allowed file extensions are executed (e.g. `.exe`,
-	`.msi`, `.bat`).
-- Add a `--dry-run` mode that lists installers without executing them.
-- Add unit tests and CI; include a `LICENSE` file and `CONTRIBUTING.md`.
-
-## 🤝 Contributing
-
-- Open an issue or submit a pull request. Add tests for new features and keep
-	changes small and focused.
-
-## 📄 License & Contact
-
-- Add a `LICENSE` file to the repository to make the license explicit.
-- For questions, open an issue in the repository.
+This project executes files shipped with the package. Only include files
+from trusted sources. For production use consider:
+- restricting executable extensions (e.g. `.exe`, `.msi`, `.bat`)
+- validating file hashes or signatures before execution
