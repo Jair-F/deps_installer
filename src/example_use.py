@@ -1,6 +1,5 @@
 import argparse
 import sys
-
 import pyuac
 import deps_installer
 
