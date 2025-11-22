@@ -19,7 +19,7 @@ jobs:
               uses: actions/setup-python@v5
               with:
                 python-version: '3.x'
-            - run: pip3 install build
+            - run: pip3 install build setuptools-scm
             - name: Verify setuptools-scm detected version
               run: python3 -m setuptools_scm
             - run: python -m build
