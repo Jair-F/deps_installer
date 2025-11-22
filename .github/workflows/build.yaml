@@ -14,9 +14,13 @@ jobs:
           contents: read
         steps:
             - uses: actions/checkout@v4
-            - run: sudo apt update && sudo apt upgrade -y
-            - run: sudo apt install -y python3 python3-pip sed
-            - run: pip3 install -e .
+              with:
+                fetch-depth: 0
+            - name: Setup Python environment
+              uses: actions/setup-python@v5
+              with:
+                python-version: '3.x'
+            - run: pip3 install build
             - run: python -m build
             - name: Publish package to PyPi
               uses: pypa/gh-action-pypi-publish@release/v1
