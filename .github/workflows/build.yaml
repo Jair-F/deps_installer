@@ -7,8 +7,11 @@ on:
             - "*"
 
 jobs:
-    builder:
+    deploy:
         runs-on: ubuntu-22.04
+        permissions:
+          id-token: write
+          contents: read
         steps:
             - uses: actions/checkout@v4
             - run: sudo apt update && sudo apt upgrade -y
@@ -17,13 +20,5 @@ jobs:
             - name: Set version in pyproject.toml
               run: sed -i "s/{{ VERSION }}/${{ github.ref_name }}/g" pyproject.toml
             - run: python -m build
-            # - run: mkdir artifacts
-            # - run: cp dist/* artifacts
             - name: Publish package to PyPi
               uses: pypa/gh-action-pypi-publish@release/v1
-            # - name: Upload Build Artifact
-            #   uses: actions/upload-artifact@v4
-            #   with:
-            #       name: build
-            #       path: artifacts
-            #       retention-days: 5
