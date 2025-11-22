@@ -5,6 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "deps_installer"
 dynamic = ["version"]
+readme = "README.md"
 authors = [
     {name = "Jair"},
 ]
