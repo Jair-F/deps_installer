@@ -5,9 +5,15 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "deps_installer"
 version = "{{ VERSION }}"
+authors = [
+    {name = "Jair"},
+]
 description = "A minimal Python project example."
 requires-python = ">=3.8"
 dependencies = [
     "pyuac>=0.0.3",
     "pywin32>=311"
 ]
+
+[project.urls]
+Repository = "https://github.com/Jair-F/deps_installer"
