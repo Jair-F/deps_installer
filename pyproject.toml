@@ -1,14 +1,14 @@
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=61.0", "setuptools-scm>=7.0", "twine", "build"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "deps_installer"
-version = "{{ VERSION }}"
+dynamic = ["version"]
 authors = [
     {name = "Jair"},
 ]
-description = "A minimal Python project example."
+description = "install all exe dependencies files in a directory - for pyinstaller"
 requires-python = ">=3.8"
 dependencies = [
     "pyuac>=0.0.3",
@@ -17,3 +17,7 @@ dependencies = [
 
 [project.urls]
 Repository = "https://github.com/Jair-F/deps_installer"
+
+[tool.setuptools_scm]
+# You can leave this table empty; setuptools-scm uses smart defaults.
+# It automatically detects the version from your Git tags.
